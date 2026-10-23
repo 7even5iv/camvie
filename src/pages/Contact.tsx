@@ -62,6 +62,11 @@ export default function Contact() {
         ? `https://wa.me/${settings.whatsapp.replace(/\D/g, '')}`
         : null;
 
+    // Construction de l'URL de la carte à partir de l'adresse dans Sanity
+    const mapEmbedUrl = settings?.address
+        ? `https://www.google.com/maps?q=${encodeURIComponent(settings.address)}&output=embed`
+        : null;
+
     return (
         <div className="container mx-auto px-4 py-16 max-w-5xl">
             <Seo
@@ -222,6 +227,28 @@ export default function Contact() {
                             {submitting ? 'Envoi en cours...' : 'Envoyer le message'}
                         </button>
                     </form>
+                </div>
+            </div>
+
+            {/* --- SECTION CARTE GOOGLE MAPS --- */}
+            <div className="mt-16">
+                <div className="text-center mb-8">
+                    <h2 className="text-2xl font-heading font-bold text-camvie-green">
+                        Nous trouver
+                    </h2>
+                    <div className="h-1 w-16 bg-camvie-red rounded-full mt-3 mx-auto" />
+                </div>
+                <div className="rounded-xl overflow-hidden shadow-lg border border-camvie-gray-100">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d509.3337309685502!2d11.521777192238286!3d3.8099623708575936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x108bd12201d147b7%3A0x6b146c5c5304b761!2sCAMVIE%20SARL!5e1!3m2!1sfr!2scm!4v1792766904563!5m2!1sfr!2scm"
+                        width="100%"
+                        height="450"
+                        style={{ border: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        title="Localisation de CAMVIE SARL"
+                    ></iframe>
                 </div>
             </div>
         </div>
