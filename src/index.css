@@ -1,0 +1,58 @@
+/* src/index.css */
+@import "tailwindcss";
+
+@theme {
+  /* ---- Palette CAMVIE ---- */
+  --color-camvie-green: #1a7a4a;
+  --color-camvie-green-light: #2e9e66;
+  --color-camvie-red: #c0392b;
+  --color-camvie-gray-50: #fafafa;
+  --color-camvie-gray-100: #f5f5f5;
+  --color-camvie-gray-300: #d4d4d4;
+  /* ← ajouté (dots inactifs témoignages) */
+  --color-camvie-gray-500: #737373;
+  /* ← ajouté (rôles sous citations) */
+  --color-camvie-gray-800: #2d3748;
+  --color-camvie-gray-900: #1a202c;
+
+  /* ---- Typographie ---- */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-heading: "Montserrat", system-ui, sans-serif;
+
+  /* ---- Animations hero ---- */
+  --animate-hero-slide: hero-slide 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-hero-fade: hero-fade 800ms ease-out forwards;
+
+  @keyframes hero-slide {
+    0% {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes hero-fade {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+/* ---- Accessibilité : désactive les animations hero si demandé ---- */
+@media (prefers-reduced-motion: reduce) {
+
+  .animate-hero-slide,
+  .animate-hero-fade {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
