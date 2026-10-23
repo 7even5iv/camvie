@@ -11,162 +11,52 @@ import Seo from '../components/Seo';
 import type { SiteSettings, Property, GalleryItem } from '../types';
 
 /* ------------------------------------------------------------------
-   Slider héro — 5 images · autoplay · navigation manuelle
+   Bannière principale CAMVIE SARL
+   Image responsive + boutons d'action accessibles
    ------------------------------------------------------------------ */
-const heroSlides = [
-    {
-        image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1920&q=80',
-        title: 'Bienvenue chez CAMVIE SARL',
-        subtitle:
-            'Votre partenaire de confiance en intermédiation foncière, commerce général et import-export.',
-    },
-    {
-        image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80',
-        title: 'Intermédiation foncière',
-        subtitle:
-            'Des terrains sécurisés, des transactions transparentes, un accompagnement de A à Z.',
-    },
-    {
-        image: 'https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1920&q=80',
-        title: 'Commerce général',
-        subtitle: 'Une offre diversifiée pour répondre à tous vos besoins du quotidien.',
-    },
-    {
-        image: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=1920&q=80',
-        title: 'Import-Export',
-        subtitle: "Des flux maîtrisés entre l'Afrique et le reste du monde.",
-    },
-    {
-        image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1920&q=80',
-        title: 'Un partenaire de confiance',
-        subtitle: 'Une équipe engagée à vos côtés pour des projets qui durent.',
-    },
-];
-
 function HeroSlider() {
-    const [current, setCurrent] = useState(0);
-    const [paused, setPaused] = useState(false);
-
-    useEffect(() => {
-        if (paused) return;
-        const timer = setInterval(
-            () => setCurrent((c) => (c + 1) % heroSlides.length),
-            6000,
-        );
-        return () => clearInterval(timer);
-    }, [paused]);
-
-    const goTo = (i: number) => setCurrent(i);
-    const next = () => setCurrent((c) => (c + 1) % heroSlides.length);
-    const prev = () => setCurrent((c) => (c - 1 + heroSlides.length) % heroSlides.length);
-
-    const slide = heroSlides[current];
-
     return (
         <section
-            className="relative h-[80vh] min-h-[600px] max-h-[860px] overflow-hidden bg-camvie-gray-900"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-            aria-roledescription="carousel"
-            aria-label="Présentation CAMVIE SARL"
+            className="relative w-full overflow-hidden bg-white"
+            aria-label="Présentation de CAMVIE SARL"
         >
-            {heroSlides.map((s, i) => (
-                <div
-                    key={i}
-                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${i === current ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                        }`}
-                    aria-hidden={i !== current}
-                >
-                    <img
-                        src={s.image}
-                        alt={s.title}
-                        className={`w-full h-full object-cover transition-transform duration-[8000ms] ease-out ${i === current ? 'scale-105' : 'scale-100'
-                            }`}
-                        loading={i === 0 ? 'eager' : 'lazy'}
-                    />
-                </div>
-            ))}
+            <img
+                src="/images/camvie-hero-banner.png"
+                alt="CAMVIE SARL met en relation les personnes ayant des besoins avec celles qui proposent des solutions, dans l'immobilier, le commerce général et l'import-export."
+                className="block h-auto w-full"
+                fetchPriority="high"
+                decoding="async"
+            />
 
-            <div className="absolute inset-0 z-20 bg-gradient-to-r from-black/75 via-black/45 to-black/20 pointer-events-none" />
-            <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-
-            <div className="relative h-full z-30 container mx-auto px-4 md:px-8 flex items-center pointer-events-none">
-                <div key={current} className="max-w-2xl text-white pointer-events-auto">
-                    <div className="flex items-center gap-3 mb-6 opacity-0 animate-hero-fade [animation-delay:0ms]">
-                        <span className="block w-10 h-[2px] bg-camvie-red" />
-                        <span className="text-xs md:text-sm font-semibold uppercase tracking-[0.2em] text-white/80">
-                            CAMVIE SARL
-                        </span>
-                    </div>
-
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mb-5 leading-[1.1] tracking-tight opacity-0 animate-hero-slide [animation-delay:100ms]">
-                        {slide.title}
-                    </h1>
-
-                    <p className="text-base md:text-lg text-white/75 mb-10 max-w-xl leading-relaxed opacity-0 animate-hero-slide [animation-delay:250ms]">
-                        {slide.subtitle}
-                    </p>
-
-                    <div className="flex flex-wrap gap-3 opacity-0 animate-hero-slide [animation-delay:400ms]">
-                        <Link
-                            to="/contact"
-                            className="inline-flex items-center gap-2 bg-white text-camvie-green px-6 py-3.5 rounded-lg font-semibold hover:bg-camvie-red hover:text-white transition-colors duration-200"
+            <div className="relative bg-white px-4 py-6 sm:py-8">
+                <div className="mx-auto flex max-w-5xl flex-col items-center justify-center gap-4 text-center sm:flex-row">
+                    <Link
+                        to="/contact"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-camvie-green px-6 py-3.5 font-semibold text-white shadow-md transition duration-300 hover:bg-camvie-green-light hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-camvie-green focus:ring-offset-2 sm:w-auto"
+                    >
+                        Parlons de votre projet
+                        <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
                         >
-                            Nous contacter
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                            </svg>
-                        </Link>
-
-                        <Link
-                            to="/opportunites"
-                            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg font-semibold text-white border border-white/40 hover:bg-white/10 hover:border-white/70 transition-colors duration-200"
-                        >
-                            Voir les opportunités
-                        </Link>
-                    </div>
-                </div>
-            </div>
-
-            <button
-                onClick={prev}
-                aria-label="Image précédente"
-                className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 z-40 items-center justify-center w-11 h-11 rounded-full bg-white/5 backdrop-blur-md border border-white/20 text-white/80 hover:bg-white/15 hover:text-white transition-colors duration-200"
-            >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-            </button>
-            <button
-                onClick={next}
-                aria-label="Image suivante"
-                className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 z-40 items-center justify-center w-11 h-11 rounded-full bg-white/5 backdrop-blur-md border border-white/20 text-white/80 hover:bg-white/15 hover:text-white transition-colors duration-200"
-            >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-            </button>
-
-            <div className="absolute bottom-8 left-0 right-0 z-40">
-                <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        {heroSlides.map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => goTo(i)}
-                                aria-label={`Aller à l'image ${i + 1}`}
-                                className={`h-[2px] rounded-full transition-all duration-300 ${i === current
-                                    ? 'w-10 bg-white'
-                                    : 'w-5 bg-white/40 hover:bg-white/70'
-                                    }`}
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17 8l4 4m0 0l-4 4m4-4H3"
                             />
-                        ))}
-                    </div>
-                    <span className="text-sm font-medium text-white/70 tabular-nums">
-                        <span className="text-white">{String(current + 1).padStart(2, '0')}</span>
-                        {' / '}
-                        {String(heroSlides.length).padStart(2, '0')}
-                    </span>
+                        </svg>
+                    </Link>
+
+                    <Link
+                        to="/opportunites"
+                        className="inline-flex w-full items-center justify-center rounded-lg border border-camvie-green px-6 py-3.5 font-semibold text-camvie-green transition duration-300 hover:bg-camvie-green hover:text-white focus:outline-none focus:ring-2 focus:ring-camvie-green focus:ring-offset-2 sm:w-auto"
+                    >
+                        Découvrir nos opportunités
+                    </Link>
                 </div>
             </div>
         </section>
@@ -239,44 +129,42 @@ function TestimonialsSlider() {
 
     return (
         <section
-            className="py-20 bg-camvie-gray-50 relative overflow-hidden"
+            className="relative overflow-hidden bg-camvie-gray-50 py-20"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
             aria-roledescription="carousel"
             aria-label="Témoignages clients"
         >
             <div
-                className="absolute -top-10 left-6 text-[20rem] leading-none text-camvie-green/5 font-serif select-none pointer-events-none"
+                className="pointer-events-none absolute -top-10 left-6 select-none font-serif text-[20rem] leading-none text-camvie-green/5"
                 aria-hidden="true"
             >
                 “
             </div>
 
-            <div className="container mx-auto px-4 relative">
-                <div className="text-center mb-10">
+            <div className="container relative mx-auto px-4">
+                <div className="mb-10 text-center">
                     <span className="text-sm font-semibold uppercase tracking-wider text-camvie-red">
                         Ils nous font confiance
                     </span>
-                    <h2 className="text-3xl md:text-4xl font-heading font-bold text-camvie-green mt-2">
+                    <h2 className="mt-2 font-heading text-3xl font-bold text-camvie-green md:text-4xl">
                         Ce que disent nos clients
                     </h2>
-                    <div className="h-1 w-16 bg-camvie-red rounded-full mt-3 mx-auto" />
+                    <div className="mx-auto mt-3 h-1 w-16 rounded-full bg-camvie-red" />
                 </div>
 
-                <div className="relative max-w-3xl mx-auto min-h-[320px] sm:min-h-[280px] md:min-h-[260px]">
+                <div className="relative mx-auto min-h-[320px] max-w-3xl sm:min-h-[280px] md:min-h-[260px]">
                     {testimonials.map((t, i) => (
                         <figure
                             key={i}
-                            className={`absolute inset-0 flex flex-col items-center text-center
-                                        transition-all duration-700 ease-in-out
-                                        ${i === current
-                                    ? 'opacity-100 translate-y-0 z-10'
-                                    : 'opacity-0 translate-y-4 z-0 pointer-events-none'
+                            className={`absolute inset-0 flex flex-col items-center text-center transition-all duration-700 ease-in-out ${i === current
+                                    ? 'z-10 translate-y-0 opacity-100'
+                                    : 'pointer-events-none z-0 translate-y-4 opacity-0'
                                 }`}
                             aria-hidden={i !== current}
                         >
                             <svg
-                                className="w-10 h-10 text-camvie-red mb-4"
+                                className="mb-4 h-10 w-10 text-camvie-red"
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                                 aria-hidden="true"
@@ -284,34 +172,30 @@ function TestimonialsSlider() {
                                 <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z" />
                             </svg>
 
-                            <blockquote className="text-xl md:text-2xl text-camvie-gray-800 font-medium leading-relaxed mb-6">
+                            <blockquote className="mb-6 text-xl font-medium leading-relaxed text-camvie-gray-800 md:text-2xl">
                                 {t.quote}
                             </blockquote>
 
                             <figcaption className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-full bg-camvie-green text-white flex items-center justify-center font-bold text-sm shadow-md">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-camvie-green text-sm font-bold text-white shadow-md">
                                     {t.initials}
                                 </div>
                                 <div className="text-left">
-                                    <div className="font-semibold text-camvie-green">
-                                        {t.author}
-                                    </div>
-                                    <div className="text-sm text-camvie-gray-500">
-                                        {t.role}
-                                    </div>
+                                    <div className="font-semibold text-camvie-green">{t.author}</div>
+                                    <div className="text-sm text-camvie-gray-500">{t.role}</div>
                                 </div>
                             </figcaption>
                         </figure>
                     ))}
                 </div>
 
-                <div className="flex items-center justify-center gap-6 mt-10">
+                <div className="mt-10 flex items-center justify-center gap-6">
                     <button
                         onClick={prev}
                         aria-label="Témoignage précédent"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-camvie-gray-100 text-camvie-green hover:bg-camvie-green hover:text-white transition-all shadow-sm"
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-camvie-gray-100 bg-white text-camvie-green shadow-sm transition-all hover:bg-camvie-green hover:text-white"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
@@ -322,9 +206,10 @@ function TestimonialsSlider() {
                                 key={i}
                                 onClick={() => setCurrent(i)}
                                 aria-label={`Aller au témoignage ${i + 1}`}
+                                aria-current={i === current ? 'true' : undefined}
                                 className={`h-1.5 rounded-full transition-all duration-300 ${i === current
-                                    ? 'w-8 bg-camvie-red'
-                                    : 'w-2 bg-camvie-gray-300 hover:bg-camvie-gray-500'
+                                        ? 'w-8 bg-camvie-red'
+                                        : 'w-2 bg-camvie-gray-300 hover:bg-camvie-gray-500'
                                     }`}
                             />
                         ))}
@@ -333,9 +218,9 @@ function TestimonialsSlider() {
                     <button
                         onClick={next}
                         aria-label="Témoignage suivant"
-                        className="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-camvie-gray-100 text-camvie-green hover:bg-camvie-green hover:text-white transition-all shadow-sm"
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-camvie-gray-100 bg-white text-camvie-green shadow-sm transition-all hover:bg-camvie-green hover:text-white"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                     </button>
@@ -346,7 +231,7 @@ function TestimonialsSlider() {
 }
 
 /* ------------------------------------------------------------------
-   Aperçu galerie — 6 médias · photos en lightbox · vidéos → /galerie
+   Aperçu galerie — photos en lightbox · vidéos → /galerie
    ------------------------------------------------------------------ */
 function GalleryPreview() {
     const [items, setItems] = useState<GalleryItem[]>([]);
@@ -364,25 +249,25 @@ function GalleryPreview() {
     const photos = useMemo(() => items.filter((i) => i.type === 'photo'), [items]);
 
     return (
-        <section className="py-20 bg-white">
+        <section className="bg-white py-20">
             <div className="container mx-auto px-4">
-                <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
+                <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
                     <div>
                         <span className="text-sm font-semibold uppercase tracking-wider text-camvie-red">
                             En images & vidéos
                         </span>
-                        <h2 className="text-3xl md:text-4xl font-heading font-bold text-camvie-green mt-2">
+                        <h2 className="mt-2 font-heading text-3xl font-bold text-camvie-green md:text-4xl">
                             Notre galerie
                         </h2>
-                        <div className="h-1 w-16 bg-camvie-red rounded-full mt-3" />
+                        <div className="mt-3 h-1 w-16 rounded-full bg-camvie-red" />
                     </div>
                     <Link
                         to="/galerie"
-                        className="inline-flex items-center gap-2 text-sm font-semibold text-camvie-red hover:text-camvie-green transition group"
+                        className="group inline-flex items-center gap-2 text-sm font-semibold text-camvie-red transition hover:text-camvie-green"
                     >
                         Voir toute la galerie
                         <svg
-                            className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                            className="h-4 w-4 transition-transform group-hover:translate-x-1"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -393,22 +278,17 @@ function GalleryPreview() {
                 </div>
 
                 {loading ? (
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                         {Array.from({ length: 6 }).map((_, i) => (
-                            <div
-                                key={i}
-                                className="aspect-square rounded-xl bg-camvie-gray-100 animate-pulse"
-                            />
+                            <div key={i} className="aspect-square animate-pulse rounded-xl bg-camvie-gray-100" />
                         ))}
                     </div>
                 ) : items.length === 0 ? (
-                    <div className="text-center py-16 bg-camvie-gray-50 rounded-2xl border border-camvie-gray-100">
-                        <p className="text-camvie-gray-800">
-                            Aucun média publié pour le moment.
-                        </p>
+                    <div className="rounded-2xl border border-camvie-gray-100 bg-camvie-gray-50 py-16 text-center">
+                        <p className="text-camvie-gray-800">Aucun média publié pour le moment.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                         {items.map((item) => {
                             if (item.type === 'photo' && item.image) {
                                 const photoIdx = photos.findIndex((p) => p._id === item._id);
@@ -416,53 +296,56 @@ function GalleryPreview() {
                                     <button
                                         key={item._id}
                                         onClick={() => setLightboxIndex(photoIdx)}
-                                        className="group relative aspect-square rounded-xl overflow-hidden bg-camvie-gray-100"
+                                        className="group relative aspect-square overflow-hidden rounded-xl bg-camvie-gray-100"
                                         aria-label={`Ouvrir la photo : ${item.title}`}
                                     >
                                         <img
                                             src={urlForImage(item.image).width(600).height(600).url()}
                                             alt={item.image.alt || item.title}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                             loading="lazy"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        <p className="absolute bottom-3 left-3 right-3 text-white text-sm font-semibold text-left opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                                        <p className="absolute bottom-3 left-3 right-3 text-left text-sm font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
                                             {item.title}
                                         </p>
                                     </button>
                                 );
                             }
+
                             if (item.type === 'video') {
                                 const embed = parseVideoUrl(item.videoUrl);
                                 if (!embed) return null;
+
                                 return (
                                     <Link
                                         key={item._id}
                                         to="/galerie"
-                                        className="group relative aspect-square rounded-xl overflow-hidden bg-camvie-gray-900"
+                                        className="group relative aspect-square overflow-hidden rounded-xl bg-camvie-gray-900"
                                         aria-label={`Voir la vidéo : ${item.title}`}
                                     >
                                         {embed.thumbnail ? (
                                             <img
                                                 src={embed.thumbnail}
                                                 alt={item.title}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                 loading="lazy"
                                             />
                                         ) : (
-                                            <div className="w-full h-full" />
+                                            <div className="h-full w-full" />
                                         )}
-                                        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors flex items-center justify-center">
-                                            <span className="w-14 h-14 rounded-full bg-camvie-red text-white flex items-center justify-center text-xl shadow-lg shadow-black/40 group-hover:scale-110 transition-transform">
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors group-hover:bg-black/50">
+                                            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-camvie-red text-xl text-white shadow-lg shadow-black/40 transition-transform group-hover:scale-110">
                                                 ▶
                                             </span>
                                         </div>
-                                        <p className="absolute bottom-3 left-3 right-3 text-white text-sm font-semibold text-left">
+                                        <p className="absolute bottom-3 left-3 right-3 text-left text-sm font-semibold text-white">
                                             {item.title}
                                         </p>
                                     </Link>
                                 );
                             }
+
                             return null;
                         })}
                     </div>
@@ -474,9 +357,7 @@ function GalleryPreview() {
                     items={photos}
                     currentIndex={lightboxIndex}
                     onClose={() => setLightboxIndex(null)}
-                    onPrev={() =>
-                        setLightboxIndex((lightboxIndex - 1 + photos.length) % photos.length)
-                    }
+                    onPrev={() => setLightboxIndex((lightboxIndex - 1 + photos.length) % photos.length)}
                     onNext={() => setLightboxIndex((lightboxIndex + 1) % photos.length)}
                 />
             )}
@@ -507,6 +388,7 @@ export default function Home() {
                 setLoading(false);
             }
         };
+
         fetchData();
     }, []);
 
@@ -517,25 +399,25 @@ export default function Home() {
             <HeroSlider />
 
             {/* Biens à la une */}
-            <section className="py-20 bg-white">
+            <section className="bg-white py-20">
                 <div className="container mx-auto px-4">
-                    <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
+                    <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
                         <div>
                             <span className="text-sm font-semibold uppercase tracking-wider text-camvie-red">
                                 Notre sélection
                             </span>
-                            <h2 className="text-3xl md:text-4xl font-heading font-bold text-camvie-green mt-2">
+                            <h2 className="mt-2 font-heading text-3xl font-bold text-camvie-green md:text-4xl">
                                 Biens à la une
                             </h2>
-                            <div className="h-1 w-16 bg-camvie-red rounded-full mt-3" />
+                            <div className="mt-3 h-1 w-16 rounded-full bg-camvie-red" />
                         </div>
                         <Link
                             to="/opportunites"
-                            className="inline-flex items-center gap-2 text-sm font-semibold text-camvie-red hover:text-camvie-green transition group"
+                            className="group inline-flex items-center gap-2 text-sm font-semibold text-camvie-red transition hover:text-camvie-green"
                         >
                             Voir tout le catalogue
                             <svg
-                                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                                className="h-4 w-4 transition-transform group-hover:translate-x-1"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -546,22 +428,17 @@ export default function Home() {
                     </div>
 
                     {loading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {Array.from({ length: 3 }).map((_, i) => (
-                                <div
-                                    key={i}
-                                    className="rounded-2xl bg-camvie-gray-100 h-72 animate-pulse"
-                                />
+                                <div key={i} className="h-72 animate-pulse rounded-2xl bg-camvie-gray-100" />
                             ))}
                         </div>
                     ) : properties.length === 0 ? (
-                        <div className="text-center py-16 bg-camvie-gray-50 rounded-2xl border border-camvie-gray-100">
-                            <p className="text-camvie-gray-800">
-                                Aucun bien mis en avant pour le moment.
-                            </p>
+                        <div className="rounded-2xl border border-camvie-gray-100 bg-camvie-gray-50 py-16 text-center">
+                            <p className="text-camvie-gray-800">Aucun bien mis en avant pour le moment.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {properties.map((property) => (
                                 <PropertyCard key={property._id} property={property} />
                             ))}
@@ -570,7 +447,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Aperçu galerie — NOUVEAU */}
+            {/* Aperçu galerie */}
             <GalleryPreview />
 
             {/* Témoignages clients */}
@@ -578,51 +455,54 @@ export default function Home() {
 
             {/* Section contact / CTA */}
             {settings && (settings.phone || settings.email) && (
-                <section className="py-16 bg-camvie-green text-white relative overflow-hidden">
+                <section className="relative overflow-hidden bg-camvie-green py-16 text-white">
                     <div className="absolute inset-0 bg-gradient-to-br from-camvie-green to-camvie-green-light opacity-90" />
-                    <div className="container mx-auto px-4 relative">
-                        <div className="grid md:grid-cols-2 gap-8 items-center">
+                    <div className="container relative mx-auto px-4">
+                        <div className="grid items-center gap-8 md:grid-cols-2">
                             <div>
-                                <span className="inline-block mb-3 text-sm font-semibold uppercase tracking-wider text-camvie-red">
+                                <span className="mb-3 inline-block text-sm font-semibold uppercase tracking-wider text-camvie-red">
                                     Contact
                                 </span>
-                                <h2 className="text-3xl md:text-4xl font-heading font-bold mb-3">
+                                <h2 className="mb-3 font-heading text-3xl font-bold md:text-4xl">
                                     Parlons de votre projet
                                 </h2>
-                                <p className="text-white/80 max-w-md">
+                                <p className="max-w-md text-white/80">
                                     Une question, un projet foncier, un besoin en commerce ou import-export ?
                                     Notre équipe vous répond sous 24h.
                                 </p>
                             </div>
+
                             <div className="flex flex-col gap-3 md:items-end">
                                 {settings.phone && (
                                     <a
                                         href={`tel:${settings.phone}`}
-                                        className="inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white hover:text-camvie-green transition-all"
+                                        className="inline-flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 px-5 py-3 backdrop-blur-md transition-all hover:bg-white hover:text-camvie-green"
                                     >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.515l.7 3.5a2 2 0 01-1 2.17l-1.5.75a11 11 0 005.5 5.5l.75-1.5a2 2 0 012.17-1l3.5.7A2 2 0 0121 16.72V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                         </svg>
                                         <span className="font-semibold">{settings.phone}</span>
                                     </a>
                                 )}
+
                                 {settings.email && (
                                     <a
                                         href={`mailto:${settings.email}`}
-                                        className="inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white hover:text-camvie-green transition-all"
+                                        className="inline-flex items-center gap-3 rounded-xl border border-white/20 bg-white/10 px-5 py-3 backdrop-blur-md transition-all hover:bg-white hover:text-camvie-green"
                                     >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                         </svg>
                                         <span className="font-semibold">{settings.email}</span>
                                     </a>
                                 )}
+
                                 <Link
                                     to="/contact"
-                                    className="inline-flex items-center gap-2 mt-2 px-6 py-3 rounded-xl bg-camvie-red text-white font-semibold hover:bg-white hover:text-camvie-red transition-all shadow-lg shadow-black/20"
+                                    className="mt-2 inline-flex items-center gap-2 rounded-xl bg-camvie-red px-6 py-3 font-semibold text-white shadow-lg shadow-black/20 transition-all hover:bg-white hover:text-camvie-red"
                                 >
                                     Formulaire de contact
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                     </svg>
                                 </Link>
