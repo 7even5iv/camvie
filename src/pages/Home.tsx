@@ -13,11 +13,12 @@ import type { SiteSettings, Property, GalleryItem } from '../types';
 /* ------------------------------------------------------------------
    Bannière principale CAMVIE SARL
    Image responsive + boutons d'action accessibles
+   Padding-top pour ne pas être masqué par le header fixe.
    ------------------------------------------------------------------ */
 function HeroSlider() {
     return (
         <section
-            className="relative w-full overflow-hidden bg-white"
+            className="relative w-full overflow-hidden bg-white pt-24 md:pt-28"
             aria-label="Présentation de CAMVIE SARL"
         >
             <img
@@ -158,8 +159,8 @@ function TestimonialsSlider() {
                         <figure
                             key={i}
                             className={`absolute inset-0 flex flex-col items-center text-center transition-all duration-700 ease-in-out ${i === current
-                                    ? 'z-10 translate-y-0 opacity-100'
-                                    : 'pointer-events-none z-0 translate-y-4 opacity-0'
+                                ? 'z-10 translate-y-0 opacity-100'
+                                : 'pointer-events-none z-0 translate-y-4 opacity-0'
                                 }`}
                             aria-hidden={i !== current}
                         >
@@ -208,8 +209,8 @@ function TestimonialsSlider() {
                                 aria-label={`Aller au témoignage ${i + 1}`}
                                 aria-current={i === current ? 'true' : undefined}
                                 className={`h-1.5 rounded-full transition-all duration-300 ${i === current
-                                        ? 'w-8 bg-camvie-red'
-                                        : 'w-2 bg-camvie-gray-300 hover:bg-camvie-gray-500'
+                                    ? 'w-8 bg-camvie-red'
+                                    : 'w-2 bg-camvie-gray-300 hover:bg-camvie-gray-500'
                                     }`}
                             />
                         ))}
