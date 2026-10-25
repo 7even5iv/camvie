@@ -54,7 +54,7 @@ function HeroSlider() {
 
                     <Link
                         to="/opportunites"
-                        className="inline-flex w-full items-center justify-center rounded-lg border border-camvie-green px-6 py-3.5 font-semibold text-camvie-green transition duration-300 hover:bg-camvie-green hover:text-white focus:outline-none focus:ring-2 focus:ring-camvie-green focus:ring-offset-2 sm:w-auto"
+                        className="inline-flex w-full items-center justify-center rounded-lg border border-red-600 px-6 py-3.5 font-semibold text-red-600 transition duration-300 hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 sm:w-auto"
                     >
                         Découvrir nos opportunités
                     </Link>

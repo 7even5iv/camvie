@@ -67,7 +67,7 @@ export default function Header() {
                         />
                         <span className="hidden sm:block text-xl md:text-2xl font-heading font-bold text-camvie-green">
                             CAMVIE
-                            <span className="text-camvie-red"> SARL</span>
+                            <span className="text-red-600"> SARL</span>
                         </span>
                     </Link>
 
