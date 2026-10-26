@@ -47,6 +47,7 @@ export default function PropertyDetail() {
     const [settings, setSettings] = useState<SiteSettings | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeImage, setActiveImage] = useState(0);
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -131,12 +132,82 @@ export default function PropertyDetail() {
     const images = property.images || [];
     const typeLabel = getTypeLabel(property.type);
 
-    const whatsappMessage = encodeURIComponent(
-        `Bonjour, je suis intéressé(e) par le bien "${property.title}" (réf. ${property.reference}). Pouvez-vous me donner plus d'informations ?`
+    /* URL absolue du bien (pour partage + message WhatsApp) */
+    const propertyUrl =
+        typeof window !== 'undefined'
+            ? `${window.location.origin}/opportunites/${property.slug.current}`
+            : `/opportunites/${property.slug.current}`;
+
+    /* ============================================================
+       📱 MESSAGE WHATSAPP ENRICHI — Contact direct
+       Inclut tous les détails du bien + URL cliquable
+       ============================================================ */
+    const whatsappContactMessage = encodeURIComponent(
+        `Bonjour CAMVIE SARL 👋\n\n` +
+        `Je suis intéressé(e) par ce bien :\n\n` +
+        `🏠 *${property.title}*\n` +
+        `📋 Réf. : ${property.reference}\n` +
+        `${property.type ? `🏷️ Type : ${typeLabel}\n` : ''}` +
+        `${property.location ? `📍 Localisation : ${property.location}\n` : ''}` +
+        `${property.area ? `📐 Superficie : ${property.area.toLocaleString('fr-FR')} m²\n` : ''}` +
+        `${property.price ? `💰 Prix : ${property.price.toLocaleString('fr-FR')} FCFA\n` : ''}` +
+        `\n🔗 Voir le bien : ${propertyUrl}\n\n` +
+        `Pouvez-vous me donner plus d'informations ?`
     );
+
     const whatsappUrl = settings?.whatsapp
-        ? `https://wa.me/${settings.whatsapp.replace(/\D/g, '')}?text=${whatsappMessage}`
+        ? `https://wa.me/${settings.whatsapp.replace(/\D/g, '')}?text=${whatsappContactMessage}`
         : null;
+
+    /* ============================================================
+       📤 MESSAGE DE PARTAGE — Plus court, pour recommander à un proche
+       ============================================================ */
+    const whatsappShareMessage = encodeURIComponent(
+        `Découvrez ce bien sur CAMVIE SARL :\n\n` +
+        `🏠 *${property.title}*\n` +
+        `${property.location ? `📍 ${property.location}\n` : ''}` +
+        `${property.area ? `📐 ${property.area.toLocaleString('fr-FR')} m²\n` : ''}` +
+        `${property.price ? `💰 ${property.price.toLocaleString('fr-FR')} FCFA\n` : ''}` +
+        `\n🔗 ${propertyUrl}`
+    );
+
+    const whatsappShareUrl = `https://wa.me/?text=${whatsappShareMessage}`;
+
+    /* Partage natif (mobile) avec fallback WhatsApp */
+    const handleShare = async () => {
+        const shareData = {
+            title: property.title,
+            text: `Découvrez ce bien sur CAMVIE SARL : ${property.title}`,
+            url: propertyUrl,
+        };
+
+        // 1. API native (mobile + certains navigateurs)
+        if (typeof navigator !== 'undefined' && navigator.share) {
+            try {
+                await navigator.share(shareData);
+                return;
+            } catch (err) {
+                // L'utilisateur a annulé → on ne fait rien
+                if (err instanceof Error && err.name === 'AbortError') return;
+                // Sinon on continue avec le fallback
+            }
+        }
+
+        // 2. Fallback : copier le lien
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+            try {
+                await navigator.clipboard.writeText(propertyUrl);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+                return;
+            } catch {
+                // Clipboard indisponible → ultime fallback
+            }
+        }
+
+        // 3. Ultime fallback : ouvrir WhatsApp share
+        window.open(whatsappShareUrl, '_blank', 'noopener,noreferrer');
+    };
 
     const seoDescription =
         extractText(property.description) ||
@@ -318,10 +389,35 @@ export default function PropertyDetail() {
                                 </div>
 
                                 <div className="p-5 md:p-6">
-                                    {/* Titre */}
-                                    <h1 className="mb-5 font-heading text-2xl font-bold leading-tight text-camvie-green">
-                                        {property.title}
-                                    </h1>
+                                    {/* Titre + bouton partage */}
+                                    <div className="mb-5 flex items-start justify-between gap-3">
+                                        <h1 className="font-heading text-2xl font-bold leading-tight text-camvie-green">
+                                            {property.title}
+                                        </h1>
+
+                                        <button
+                                            onClick={handleShare}
+                                            aria-label="Partager ce bien"
+                                            className="group relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-camvie-gray-100 bg-white text-camvie-gray-500 transition-all hover:border-camvie-green/30 hover:bg-camvie-green/5 hover:text-camvie-green"
+                                        >
+                                            {copied ? (
+                                                /* Icône "check" quand le lien est copié */
+                                                <svg className="h-4 w-4 text-camvie-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            ) : (
+                                                /* Icône partage classique */
+                                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                                </svg>
+                                            )}
+
+                                            {/* Tooltip */}
+                                            <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-camvie-gray-900 px-2 py-1 text-[11px] font-semibold text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+                                                {copied ? 'Lien copié !' : 'Partager'}
+                                            </span>
+                                        </button>
+                                    </div>
 
                                     {/* Caractéristiques avec icônes */}
                                     <div className="mb-5 space-y-3">
@@ -392,12 +488,12 @@ export default function PropertyDetail() {
                                                 href={whatsappUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-green-700"
+                                                className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-3 font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#1FBE5A] hover:shadow-md hover:shadow-green-600/20"
                                             >
-                                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-5 w-5 transition-transform group-hover:scale-110" fill="currentColor" viewBox="0 0 24 24">
                                                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                                                 </svg>
-                                                WhatsApp
+                                                Contacter sur WhatsApp
                                             </a>
                                         )}
 
@@ -411,6 +507,21 @@ export default function PropertyDetail() {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                             </svg>
                                         </Link>
+                                    </div>
+
+                                    {/* Bouton "Partager sur WhatsApp" secondaire */}
+                                    <div className="mt-3 border-t border-camvie-gray-100 pt-3">
+                                        <a
+                                            href={whatsappShareUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex w-full items-center justify-center gap-2 rounded-lg py-2 text-xs font-semibold text-camvie-gray-500 transition hover:text-[#25D366]"
+                                        >
+                                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                            </svg>
+                                            Partager sur WhatsApp
+                                        </a>
                                     </div>
                                 </div>
                             </div>
