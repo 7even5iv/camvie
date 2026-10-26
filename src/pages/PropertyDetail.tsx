@@ -1,3 +1,4 @@
+// src/pages/PropertyDetail.tsx
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { PortableText } from '@portabletext/react';
@@ -48,24 +49,35 @@ export default function PropertyDetail() {
         fetchData();
     }, [slug]);
 
-    if (loading) return <div className="text-center py-12">Chargement...</div>;
+    /* État de chargement — padding-top pour passer sous le header */
+    if (loading) {
+        return (
+            <div className="pt-24 md:pt-28">
+                <div className="container mx-auto max-w-6xl px-4 py-12 text-center">
+                    <p className="text-camvie-gray-800">Chargement...</p>
+                </div>
+            </div>
+        );
+    }
 
     if (!property) {
         return (
-            <div className="container mx-auto px-4 py-16 text-center">
-                <Seo title="Bien introuvable" />
-                <h1 className="text-2xl font-heading font-bold text-camvie-green mb-4">
-                    Bien introuvable
-                </h1>
-                <p className="text-camvie-gray-800 mb-6">
-                    Cette opportunité n'existe pas ou n'est plus disponible.
-                </p>
-                <Link
-                    to="/opportunites"
-                    className="bg-camvie-green text-white px-6 py-3 rounded-lg hover:bg-camvie-green-light transition inline-block"
-                >
-                    Retour au catalogue
-                </Link>
+            <div className="pt-24 md:pt-28">
+                <div className="container mx-auto max-w-6xl px-4 py-16 text-center">
+                    <Seo title="Bien introuvable" />
+                    <h1 className="mb-4 font-heading text-2xl font-bold text-camvie-green">
+                        Bien introuvable
+                    </h1>
+                    <p className="mb-6 text-camvie-gray-800">
+                        Cette opportunité n'existe pas ou n'est plus disponible.
+                    </p>
+                    <Link
+                        to="/opportunites"
+                        className="inline-block rounded-lg bg-camvie-green px-6 py-3 text-white transition hover:bg-camvie-green-light"
+                    >
+                        Retour au catalogue
+                    </Link>
+                </div>
             </div>
         );
     }
@@ -92,118 +104,121 @@ export default function PropertyDetail() {
             .join(' — ');
 
     return (
-        <div className="container mx-auto px-4 py-12 max-w-6xl">
-            <Seo title={property.title} description={seoDescription} />
+        <div className="pt-24 md:pt-28">
+            <div className="container mx-auto max-w-6xl px-4 pb-12">
+                <Seo title={property.title} description={seoDescription} />
 
-            <Link
-                to="/opportunites"
-                className="text-camvie-green hover:underline text-sm mb-6 inline-block"
-            >
-                ← Retour au catalogue
-            </Link>
+                <Link
+                    to="/opportunites"
+                    className="mb-6 inline-block text-sm text-camvie-green hover:underline"
+                >
+                    ← Retour au catalogue
+                </Link>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Colonne gauche : images + description */}
-                <div className="lg:col-span-2">
-                    {/* Image principale */}
-                    <div className="bg-camvie-gray-100 rounded-lg overflow-hidden mb-3 aspect-[4/3]">
-                        {images[activeImage] ? (
-                            <img
-                                src={urlForImage(images[activeImage]).width(1200).url()}
-                                alt={images[activeImage].alt || property.title}
-                                className="w-full h-full object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center text-camvie-gray-800">
-                                Photo à venir
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    {/* Colonne gauche : images + description */}
+                    <div className="lg:col-span-2">
+                        {/* Image principale */}
+                        <div className="mb-3 aspect-[4/3] overflow-hidden rounded-lg bg-camvie-gray-100">
+                            {images[activeImage] ? (
+                                <img
+                                    src={urlForImage(images[activeImage]).width(1200).url()}
+                                    alt={images[activeImage].alt || property.title}
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                <div className="flex h-full w-full items-center justify-center text-camvie-gray-800">
+                                    Photo à venir
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Miniatures */}
+                        {images.length > 1 && (
+                            <div className="mb-8 grid grid-cols-4 gap-2">
+                                {images.map((img, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setActiveImage(i)}
+                                        className={`aspect-square overflow-hidden rounded border-2 ${activeImage === i ? 'border-camvie-green' : 'border-transparent'
+                                            }`}
+                                    >
+                                        <img
+                                            src={urlForImage(img).width(200).height(200).url()}
+                                            alt=""
+                                            className="h-full w-full object-cover"
+                                        />
+                                    </button>
+                                ))}
                             </div>
                         )}
+
+                        {/* Description */}
+                        <div className="rounded-lg bg-white p-6 shadow-md">
+                            <h2 className="mb-4 font-heading text-2xl font-bold text-camvie-green">
+                                Description
+                            </h2>
+                            {property.description ? (
+                                <div className="prose prose-camvie max-w-none text-camvie-gray-800">
+                                    <PortableText value={property.description} />
+                                </div>
+                            ) : (
+                                <p className="text-camvie-gray-800">Aucune description fournie.</p>
+                            )}
+                        </div>
                     </div>
 
-                    {/* Miniatures */}
-                    {images.length > 1 && (
-                        <div className="grid grid-cols-4 gap-2 mb-8">
-                            {images.map((img, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setActiveImage(i)}
-                                    className={`aspect-square rounded overflow-hidden border-2 ${activeImage === i ? 'border-camvie-green' : 'border-transparent'
-                                        }`}
+                    {/* Colonne droite : infos + contact */}
+                    <div className="lg:col-span-1">
+                        {/* sticky top-28 = 112px : reste sous le header flottant */}
+                        <div className="sticky top-28 rounded-lg bg-white p-6 shadow-md">
+                            <span className="text-xs uppercase tracking-wide text-camvie-gray-800">
+                                Référence {property.reference}
+                            </span>
+                            <h1 className="mb-4 mt-2 font-heading text-2xl font-bold text-camvie-green">
+                                {property.title}
+                            </h1>
+
+                            <div className="mb-6 space-y-2 text-sm text-camvie-gray-800">
+                                {property.type && (
+                                    <p><strong>Type :</strong> {property.type}</p>
+                                )}
+                                {property.location && (
+                                    <p><strong>Localisation :</strong> {property.location}</p>
+                                )}
+                                {property.area && (
+                                    <p><strong>Superficie :</strong> {property.area} m²</p>
+                                )}
+                            </div>
+
+                            <div className="mb-6 border-t border-camvie-gray-100 pt-4">
+                                <p className="mb-1 text-xs text-camvie-gray-800">Prix / Conditions</p>
+                                <p className="text-2xl font-bold text-camvie-red">
+                                    {property.price
+                                        ? `${property.price.toLocaleString('fr-FR')} FCFA`
+                                        : 'Sur demande'}
+                                </p>
+                            </div>
+
+                            {whatsappUrl && (
+                                <a
+                                    href={whatsappUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="mb-3 block w-full rounded-lg bg-green-600 px-6 py-3 text-center font-semibold text-white transition hover:bg-green-700"
                                 >
-                                    <img
-                                        src={urlForImage(img).width(200).height(200).url()}
-                                        alt=""
-                                        className="w-full h-full object-cover"
-                                    />
-                                </button>
-                            ))}
-                        </div>
-                    )}
-
-                    {/* Description */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h2 className="text-2xl font-heading font-bold text-camvie-green mb-4">
-                            Description
-                        </h2>
-                        {property.description ? (
-                            <div className="prose prose-camvie max-w-none text-camvie-gray-800">
-                                <PortableText value={property.description} />
-                            </div>
-                        ) : (
-                            <p className="text-camvie-gray-800">Aucune description fournie.</p>
-                        )}
-                    </div>
-                </div>
-
-                {/* Colonne droite : infos + contact */}
-                <div className="lg:col-span-1">
-                    <div className="bg-white rounded-lg shadow-md p-6 sticky top-6">
-                        <span className="text-xs text-camvie-gray-800 uppercase tracking-wide">
-                            Référence {property.reference}
-                        </span>
-                        <h1 className="text-2xl font-heading font-bold text-camvie-green mt-2 mb-4">
-                            {property.title}
-                        </h1>
-
-                        <div className="space-y-2 text-sm text-camvie-gray-800 mb-6">
-                            {property.type && (
-                                <p><strong>Type :</strong> {property.type}</p>
+                                    💬 Demander via WhatsApp
+                                </a>
                             )}
-                            {property.location && (
-                                <p><strong>Localisation :</strong> {property.location}</p>
-                            )}
-                            {property.area && (
-                                <p><strong>Superficie :</strong> {property.area} m²</p>
-                            )}
-                        </div>
 
-                        <div className="border-t border-camvie-gray-100 pt-4 mb-6">
-                            <p className="text-xs text-camvie-gray-800 mb-1">Prix / Conditions</p>
-                            <p className="text-2xl font-bold text-camvie-red">
-                                {property.price
-                                    ? `${property.price.toLocaleString('fr-FR')} FCFA`
-                                    : 'Sur demande'}
-                            </p>
-                        </div>
-
-                        {whatsappUrl && (
-                            <a
-                                href={whatsappUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block w-full bg-green-600 text-white text-center px-6 py-3 rounded-lg hover:bg-green-700 transition mb-3 font-semibold"
+                            <Link
+                                to="/contact"
+                                state={{ propertyId: property._id, propertyTitle: property.title }}
+                                className="block w-full rounded-lg bg-camvie-red px-6 py-3 text-center font-semibold text-white transition hover:opacity-90"
                             >
-                                💬 Demander via WhatsApp
-                            </a>
-                        )}
-
-                        <Link
-                            to="/contact"
-                            state={{ propertyId: property._id, propertyTitle: property.title }}
-                            className="block w-full bg-camvie-red text-white text-center px-6 py-3 rounded-lg hover:opacity-90 transition font-semibold"
-                        >
-                            Formulaire de demande
-                        </Link>
+                                Formulaire de demande
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>

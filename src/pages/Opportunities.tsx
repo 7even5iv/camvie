@@ -1,3 +1,4 @@
+// src/pages/Opportunities.tsx
 import { useEffect, useState } from 'react';
 import { sanityClient } from '../lib/sanity';
 import { publishedPropertiesQuery } from '../lib/queries';
@@ -18,35 +19,38 @@ export default function Opportunities() {
     }, []);
 
     return (
-        <div className="container mx-auto px-4 py-16">
-            <Seo
-                title="Opportunités foncières"
-                description="Découvrez notre sélection de biens fonciers disponibles à la vente au Cameroun."
-            />
-            <div className="text-center mb-12">
-                <h1 className="text-4xl font-heading font-bold text-camvie-green mb-4">
-                    Opportunités foncières
-                </h1>
-                <p className="text-camvie-gray-800 max-w-2xl mx-auto">
-                    Découvrez notre sélection de biens disponibles à la vente.
-                </p>
-            </div>
+        <div className="pt-24 md:pt-28">
+            <div className="container mx-auto px-4 pb-16">
+                <Seo
+                    title="Opportunités foncières"
+                    description="Découvrez notre sélection de biens fonciers disponibles à la vente au Cameroun."
+                />
 
-            {loading ? (
-                <p className="text-center text-camvie-gray-800">Chargement...</p>
-            ) : properties.length === 0 ? (
-                <div className="text-center py-12 bg-camvie-gray-50 rounded-lg">
-                    <p className="text-camvie-gray-800">
-                        Aucune opportunité publiée pour le moment.
+                <div className="mb-12 text-center">
+                    <h1 className="mb-4 font-heading text-3xl font-bold text-camvie-green md:text-4xl">
+                        Opportunités foncières
+                    </h1>
+                    <p className="mx-auto max-w-2xl text-camvie-gray-800">
+                        Découvrez notre sélection de biens disponibles à la vente.
                     </p>
                 </div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {properties.map((property) => (
-                        <PropertyCard key={property._id} property={property} />
-                    ))}
-                </div>
-            )}
+
+                {loading ? (
+                    <p className="text-center text-camvie-gray-800">Chargement...</p>
+                ) : properties.length === 0 ? (
+                    <div className="rounded-lg bg-camvie-gray-50 py-12 text-center">
+                        <p className="text-camvie-gray-800">
+                            Aucune opportunité publiée pour le moment.
+                        </p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {properties.map((property) => (
+                            <PropertyCard key={property._id} property={property} />
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

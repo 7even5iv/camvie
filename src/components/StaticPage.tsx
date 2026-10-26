@@ -1,3 +1,4 @@
+// src/components/StaticPage.tsx
 import { useEffect, useState } from 'react';
 import { PortableText } from '@portabletext/react';
 import { sanityClient } from '../lib/sanity';
@@ -21,23 +22,34 @@ export default function StaticPage({ slug, fallbackTitle }: Props) {
             .finally(() => setLoading(false));
     }, [slug]);
 
-    if (loading) return <div className="text-center py-12">Chargement...</div>;
+    /* État de chargement — padding-top pour passer sous le header */
+    if (loading) {
+        return (
+            <div className="pt-24 md:pt-28">
+                <div className="container mx-auto max-w-3xl px-4 py-12 text-center">
+                    <p className="text-camvie-gray-800">Chargement...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="container mx-auto px-4 py-16 max-w-3xl">
-            <h1 className="text-4xl font-heading font-bold text-camvie-green mb-8">
-                {page?.title || fallbackTitle}
-            </h1>
+        <div className="pt-24 md:pt-28">
+            <div className="container mx-auto max-w-3xl px-4 pb-16">
+                <h1 className="mb-8 font-heading text-3xl font-bold text-camvie-green md:text-4xl">
+                    {page?.title || fallbackTitle}
+                </h1>
 
-            {page?.content ? (
-                <div className="prose prose-lg max-w-none text-camvie-gray-800">
-                    <PortableText value={page.content} />
-                </div>
-            ) : (
-                <p className="text-camvie-gray-800">
-                    Cette page n'a pas encore été rédigée. Merci de la compléter dans Sanity Studio.
-                </p>
-            )}
+                {page?.content ? (
+                    <div className="prose prose-lg max-w-none text-camvie-gray-800">
+                        <PortableText value={page.content} />
+                    </div>
+                ) : (
+                    <p className="text-camvie-gray-800">
+                        Cette page n'a pas encore été rédigée. Merci de la compléter dans Sanity Studio.
+                    </p>
+                )}
+            </div>
         </div>
     );
 }

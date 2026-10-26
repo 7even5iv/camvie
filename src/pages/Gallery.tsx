@@ -1,3 +1,4 @@
+// src/pages/Gallery.tsx
 import { useEffect, useState, useMemo } from 'react';
 import { sanityClient } from '../lib/sanity';
 import { galleryItemsQuery } from '../lib/queries';
@@ -31,7 +32,16 @@ export default function Gallery() {
 
     const photos = useMemo(() => filtered.filter((i) => i.type === 'photo'), [filtered]);
 
-    if (loading) return <div className="text-center py-12">Chargement...</div>;
+    /* État de chargement — padding-top pour passer sous le header */
+    if (loading) {
+        return (
+            <div className="pt-24 md:pt-28">
+                <div className="container mx-auto px-4 py-12 text-center">
+                    <p className="text-camvie-gray-800">Chargement...</p>
+                </div>
+            </div>
+        );
+    }
 
     const counts = {
         all: items.length,
@@ -40,124 +50,128 @@ export default function Gallery() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-16">
-            <Seo
-                title="Galerie"
-                description="Découvrez en images et en vidéos les biens, événements et activités de CAMVIE SARL."
-            />
+        <div className="pt-24 md:pt-28">
+            <div className="container mx-auto px-4 pb-16">
+                <Seo
+                    title="Galerie"
+                    description="Découvrez en images et en vidéos les biens, événements et activités de CAMVIE SARL."
+                />
 
-            <div className="text-center mb-8">
-                <h1 className="text-4xl font-heading font-bold text-camvie-green mb-4">Galerie</h1>
-                <p className="text-camvie-gray-800 max-w-2xl mx-auto">
-                    Photos et vidéos de nos biens, événements et activités.
-                </p>
-            </div>
+                <div className="mb-8 text-center">
+                    <h1 className="mb-4 font-heading text-3xl font-bold text-camvie-green md:text-4xl">
+                        Galerie
+                    </h1>
+                    <p className="mx-auto max-w-2xl text-camvie-gray-800">
+                        Photos et vidéos de nos biens, événements et activités.
+                    </p>
+                </div>
 
-            {/* Filtres */}
-            <div className="flex justify-center gap-3 mb-10 flex-wrap">
-                {([
-                    { key: 'all', label: `Tous (${counts.all})` },
-                    { key: 'photo', label: `📷 Photos (${counts.photo})` },
-                    { key: 'video', label: `🎬 Vidéos (${counts.video})` },
-                ] as const).map((tab) => (
-                    <button
-                        key={tab.key}
-                        onClick={() => setFilter(tab.key)}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${filter === tab.key
+                {/* Filtres */}
+                <div className="mb-10 flex flex-wrap justify-center gap-3">
+                    {([
+                        { key: 'all', label: `Tous (${counts.all})` },
+                        { key: 'photo', label: `📷 Photos (${counts.photo})` },
+                        { key: 'video', label: `🎬 Vidéos (${counts.video})` },
+                    ] as const).map((tab) => (
+                        <button
+                            key={tab.key}
+                            onClick={() => setFilter(tab.key)}
+                            className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${filter === tab.key
                                 ? 'bg-camvie-green text-white'
                                 : 'bg-camvie-gray-100 text-camvie-gray-800 hover:bg-camvie-gray-50'
-                            }`}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
+                                }`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Vide */}
+                {filtered.length === 0 ? (
+                    <div className="rounded-lg bg-camvie-gray-50 py-12 text-center">
+                        <p className="text-camvie-gray-800">Aucun média publié pour le moment.</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        {filtered.map((item) => {
+                            if (item.type === 'photo' && item.image) {
+                                const photoIndex = photos.findIndex((p) => p._id === item._id);
+                                return (
+                                    <button
+                                        key={item._id}
+                                        onClick={() => setLightboxIndex(photoIndex)}
+                                        className="group relative aspect-square overflow-hidden rounded-lg bg-camvie-gray-100"
+                                    >
+                                        <img
+                                            src={urlForImage(item.image).width(600).height(600).url()}
+                                            alt={item.image.alt || item.title}
+                                            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                            loading="lazy"
+                                        />
+                                        <div className="absolute inset-0 flex items-end bg-black/0 transition group-hover:bg-black/30">
+                                            <p className="p-3 text-sm font-semibold text-white opacity-0 transition group-hover:opacity-100">
+                                                {item.title}
+                                            </p>
+                                        </div>
+                                    </button>
+                                );
+                            }
+
+                            if (item.type === 'video') {
+                                const embed = parseVideoUrl(item.videoUrl);
+                                if (!embed) return null;
+                                const isPlaying = playingVideoId === item._id;
+
+                                return (
+                                    <div key={item._id} className="flex flex-col overflow-hidden rounded-lg bg-camvie-gray-100">
+                                        <div className="relative aspect-video bg-black">
+                                            {isPlaying ? (
+                                                <iframe
+                                                    src={`${embed.embedUrl}?autoplay=1`}
+                                                    title={item.title}
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowFullScreen
+                                                    className="h-full w-full"
+                                                />
+                                            ) : (
+                                                <button
+                                                    onClick={() => setPlayingVideoId(item._id)}
+                                                    className="group relative h-full w-full"
+                                                    aria-label={`Lire la vidéo : ${item.title}`}
+                                                >
+                                                    {embed.thumbnail ? (
+                                                        <img
+                                                            src={embed.thumbnail}
+                                                            alt={item.title}
+                                                            className="h-full w-full object-cover"
+                                                            loading="lazy"
+                                                        />
+                                                    ) : (
+                                                        <div className="h-full w-full bg-camvie-gray-900" />
+                                                    )}
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition group-hover:bg-black/50">
+                                                        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-camvie-red text-2xl text-white">
+                                                            ▶
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="p-3">
+                                            <p className="text-sm font-semibold text-camvie-green">{item.title}</p>
+                                            {item.caption && (
+                                                <p className="mt-1 text-xs text-camvie-gray-800">{item.caption}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            return null;
+                        })}
+                    </div>
+                )}
             </div>
-
-            {/* Vide */}
-            {filtered.length === 0 ? (
-                <div className="text-center py-12 bg-camvie-gray-50 rounded-lg">
-                    <p className="text-camvie-gray-800">Aucun média publié pour le moment.</p>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {filtered.map((item) => {
-                        if (item.type === 'photo' && item.image) {
-                            const photoIndex = photos.findIndex((p) => p._id === item._id);
-                            return (
-                                <button
-                                    key={item._id}
-                                    onClick={() => setLightboxIndex(photoIndex)}
-                                    className="group relative aspect-square rounded-lg overflow-hidden bg-camvie-gray-100"
-                                >
-                                    <img
-                                        src={urlForImage(item.image).width(600).height(600).url()}
-                                        alt={item.image.alt || item.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                                        loading="lazy"
-                                    />
-                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-end">
-                                        <p className="text-white text-sm font-semibold p-3 opacity-0 group-hover:opacity-100 transition">
-                                            {item.title}
-                                        </p>
-                                    </div>
-                                </button>
-                            );
-                        }
-
-                        if (item.type === 'video') {
-                            const embed = parseVideoUrl(item.videoUrl);
-                            if (!embed) return null;
-                            const isPlaying = playingVideoId === item._id;
-
-                            return (
-                                <div key={item._id} className="rounded-lg overflow-hidden bg-camvie-gray-100 flex flex-col">
-                                    <div className="aspect-video relative bg-black">
-                                        {isPlaying ? (
-                                            <iframe
-                                                src={`${embed.embedUrl}?autoplay=1`}
-                                                title={item.title}
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                allowFullScreen
-                                                className="w-full h-full"
-                                            />
-                                        ) : (
-                                            <button
-                                                onClick={() => setPlayingVideoId(item._id)}
-                                                className="w-full h-full relative group"
-                                                aria-label={`Lire la vidéo : ${item.title}`}
-                                            >
-                                                {embed.thumbnail ? (
-                                                    <img
-                                                        src={embed.thumbnail}
-                                                        alt={item.title}
-                                                        className="w-full h-full object-cover"
-                                                        loading="lazy"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full bg-camvie-gray-900" />
-                                                )}
-                                                <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition">
-                                                    <span className="w-16 h-16 rounded-full bg-camvie-red text-white flex items-center justify-center text-2xl">
-                                                        ▶
-                                                    </span>
-                                                </div>
-                                            </button>
-                                        )}
-                                    </div>
-                                    <div className="p-3">
-                                        <p className="text-sm font-semibold text-camvie-green">{item.title}</p>
-                                        {item.caption && (
-                                            <p className="text-xs text-camvie-gray-800 mt-1">{item.caption}</p>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        }
-
-                        return null;
-                    })}
-                </div>
-            )}
 
             {/* Lightbox */}
             {lightboxIndex !== null && photos.length > 0 && (
