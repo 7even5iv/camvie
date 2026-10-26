@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import FloatingSocial from './components/FloatingSocial';
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -19,6 +20,9 @@ function Layout() {
         <Outlet />
       </main>
       <Footer />
+
+      {/* Bouton flottant réseaux sociaux — sur toutes les pages */}
+      <FloatingSocial />
     </div>
   );
 }

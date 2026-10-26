@@ -71,12 +71,10 @@ function GalleryPreview() {
     const photoCount = useMemo(() => items.filter((i) => i.type === 'photo').length, [items]);
     const videoCount = useMemo(() => items.filter((i) => i.type === 'video').length, [items]);
 
-    // On passe en bento (1ʳᵉ tuile 2x2) uniquement si on a assez de contenu
     const useBento = items.length >= 5;
 
     return (
         <section className="relative overflow-hidden bg-camvie-gray-50 py-24">
-            {/* Motif pointillé subtil */}
             <div
                 className="pointer-events-none absolute inset-0 opacity-[0.04]"
                 style={{
@@ -86,11 +84,9 @@ function GalleryPreview() {
                 aria-hidden="true"
             />
 
-            {/* Trait d'accent en haut */}
             <div className="absolute left-1/2 top-0 h-1 w-32 -translate-x-1/2 rounded-full bg-gradient-to-r from-transparent via-camvie-red to-transparent" />
 
             <div className="relative container mx-auto px-4">
-                {/* En-tête éditorial */}
                 <div className="mb-14 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
                     <div className="max-w-2xl">
                         <div className="mb-5 flex items-center gap-3">
@@ -107,7 +103,6 @@ function GalleryPreview() {
                             à travers notre collection de photos et vidéos.
                         </p>
 
-                        {/* Badges de comptage */}
                         {(photoCount > 0 || videoCount > 0) && (
                             <div className="mt-6 flex flex-wrap items-center gap-3">
                                 {photoCount > 0 && (
@@ -142,7 +137,6 @@ function GalleryPreview() {
                     </Link>
                 </div>
 
-                {/* Bento grid */}
                 {loading ? (
                     <div className="grid grid-cols-2 gap-3 md:auto-rows-[220px] md:grid-cols-3">
                         {Array.from({ length: 6 }).map((_, i) => {
@@ -151,8 +145,8 @@ function GalleryPreview() {
                                 <div
                                     key={i}
                                     className={`animate-pulse rounded-2xl bg-camvie-gray-100 ${isFeatured
-                                            ? 'col-span-2 row-span-2 aspect-square md:col-span-2 md:row-span-2 md:aspect-auto'
-                                            : 'aspect-square md:aspect-auto'
+                                        ? 'col-span-2 row-span-2 aspect-square md:col-span-2 md:row-span-2 md:aspect-auto'
+                                        : 'aspect-square md:aspect-auto'
                                         }`}
                                 />
                             );
@@ -199,10 +193,8 @@ function GalleryPreview() {
                                             loading={index < 3 ? 'eager' : 'lazy'}
                                         />
 
-                                        {/* Overlay dégradé */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
 
-                                        {/* Badge Photo */}
                                         <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-camvie-green shadow-sm backdrop-blur-sm">
                                             <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
@@ -210,14 +202,12 @@ function GalleryPreview() {
                                             Photo
                                         </span>
 
-                                        {/* Zoom au survol */}
                                         <div className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 opacity-0 backdrop-blur-md transition-all duration-300 group-hover:scale-110 group-hover:opacity-100">
                                             <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                             </svg>
                                         </div>
 
-                                        {/* Titre + légende */}
                                         <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
                                             {item.title && (
                                                 <p
@@ -261,7 +251,6 @@ function GalleryPreview() {
 
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-70 transition-opacity duration-300 group-hover:opacity-90" />
 
-                                        {/* Badge Vidéo */}
                                         <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-camvie-red px-2.5 py-1 text-xs font-semibold text-white shadow-lg">
                                             <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                                                 <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
@@ -269,7 +258,6 @@ function GalleryPreview() {
                                             Vidéo
                                         </span>
 
-                                        {/* Bouton Play */}
                                         <div className="absolute inset-0 flex items-center justify-center">
                                             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/30 bg-white/20 shadow-xl backdrop-blur-md transition-all duration-300 group-hover:scale-110 group-hover:border-camvie-red group-hover:bg-camvie-red md:h-20 md:w-20">
                                                 <svg className="h-6 w-6 translate-x-0.5 text-white md:h-8 md:w-8" fill="currentColor" viewBox="0 0 20 20">
@@ -303,7 +291,6 @@ function GalleryPreview() {
                 )}
             </div>
 
-            {/* Lightbox */}
             {lightboxIndex !== null && photos.length > 0 && (
                 <Lightbox
                     items={photos}
@@ -343,7 +330,6 @@ export default function Home() {
         fetchData();
     }, []);
 
-    /* ---- Statistiques dérivées pour le bandeau ---- */
     const locationsCount = useMemo(
         () => new Set(properties.map((p) => p.location).filter(Boolean)).size,
         [properties]
@@ -362,12 +348,11 @@ export default function Home() {
 
             <HeroSlider />
 
-            {/* ---------------- BIENS À LA UNE (refonte) ---------------- */}
+            {/* ---------------- BIENS À LA UNE ---------------- */}
             <section className="relative overflow-hidden bg-gradient-to-b from-white via-white to-camvie-gray-50 py-24">
                 <div className="absolute left-1/2 top-0 h-1 w-32 -translate-x-1/2 rounded-full bg-gradient-to-r from-transparent via-camvie-red to-transparent" />
 
                 <div className="container mx-auto px-4">
-                    {/* En-tête éditorial */}
                     <div className="mb-14 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
                         <div className="max-w-2xl">
                             <div className="mb-5 flex items-center gap-3">
@@ -397,7 +382,6 @@ export default function Home() {
                         </Link>
                     </div>
 
-                    {/* Bandeau de statistiques */}
                     {!loading && properties.length > 0 && (
                         <div className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div className="flex items-center gap-4 rounded-2xl border border-camvie-gray-100 bg-white p-5 shadow-sm">
@@ -447,7 +431,6 @@ export default function Home() {
                         </div>
                     )}
 
-                    {/* Grille des biens */}
                     {loading ? (
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {Array.from({ length: 3 }).map((_, i) => (
@@ -484,10 +467,10 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ---------------- APERÇU GALERIE (refonte) ---------------- */}
+            {/* ---------------- APERÇU GALERIE ---------------- */}
             <GalleryPreview />
 
-            {/* ---------------- SECTION CONTACT CTA (inchangée) ---------------- */}
+            {/* ---------------- SECTION CONTACT CTA ---------------- */}
             {settings && (settings.phone || settings.email) && (
                 <section className="relative overflow-hidden bg-camvie-green py-16 text-white">
                     <div className="absolute inset-0 bg-gradient-to-br from-camvie-green to-camvie-green-light opacity-90" />
